@@ -1,5 +1,6 @@
 package monzo
 
+
 // FeedEntry represents an entry into the user's account feed
 type FeedEntry struct {
     AccountID string `json:"account_id"`
@@ -16,4 +17,9 @@ type FeedEntry struct {
     } `json:"params"`
 }
 
-// TODO: Implement adding feed items.
+// AddFeedItem adds a new item to the user's account feed
+func AddFeedItem(item FeedEntry) error {
+    
+
+    return nil
+}

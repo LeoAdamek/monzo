@@ -21,7 +21,6 @@ type Transaction struct {
 }
 
 // TransactionMetadata is a set of custom key/value pairs assigned to a transaction.
-// TransactionMetadata is available only to the application which gets it.
 type TransactionMetadata map[string]string
 
 // Merchant represents a Merchant
@@ -76,6 +75,8 @@ func (c Client) GetTransaction(transactionID string) (Transaction, error) {
 }
 
 // Transactions lists a set of transactions
+//
+// input will define how those transactions are used
 func (c Client) Transactions(input ListTransactionsInput) ([]Transaction, error) {
 
     reqURL := *baseURL
@@ -113,4 +114,23 @@ func (c Client) Transactions(input ListTransactionsInput) ([]Transaction, error)
     err := c.json(req, &response)
     
     return response.Transactions, err
+}
+
+// ByValue allows for sorting of transactions by their value.
+//
+// Example:
+//   var t []Transaction
+//   sort.Sort(ByValue(t))
+type ByValue []Transaction
+
+func (b ByValue) Len() int {
+    return len(b)
+}
+
+func (b ByValue) Swap(i,j int) {
+    b[i], b[j] = b[j], b[i]
+}
+
+func (b ByValue) Less(i, j int) bool {
+    return b[i].Amount < b[j].Amount
 }

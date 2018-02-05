@@ -25,7 +25,9 @@ func TestClient_Accounts(t *testing.T) {
         return
     }
     
-    t.Log(accounts)
+    if len(accounts) == 0 {
+        t.Fail()
+    }
 }
 
 func TestClient_Transactions(t *testing.T) {
@@ -45,5 +47,7 @@ func TestClient_Transactions(t *testing.T) {
         return
     }
     
-    t.Log(transactions)
+    if len(transactions) == 0 {
+        t.Fail()
+    }
 }

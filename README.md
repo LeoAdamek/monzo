@@ -3,6 +3,15 @@
 
 Golang API client for [Monzo][monzo]
 
+Features
+--------
+
+* No external dependencies
+* Overridable `net/http.Client`
+* Overridable logging
+* Decent test coverage
+* Built-in helpers
+
 Documentation
 ------------- 
 
