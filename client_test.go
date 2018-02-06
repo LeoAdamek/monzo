@@ -3,6 +3,7 @@ package monzo
 import (
 	"os"
 	"testing"
+	"time"
 )
 
 var client *Client
@@ -31,6 +32,22 @@ func TestClient_Accounts(t *testing.T) {
 	}
 }
 
+func TestClient_Balance(t *testing.T) {
+	accounts, err := client.Accounts()
+
+	if err != nil {
+		t.FailNow()
+	}
+
+	b, err := client.Balance(accounts[0].ID)
+
+	if err != nil {
+		t.FailNow()
+	}
+
+	t.Log(b)
+}
+
 func TestClient_Transactions(t *testing.T) {
 	accounts, err := client.Accounts()
 
@@ -38,8 +55,16 @@ func TestClient_Transactions(t *testing.T) {
 		t.FailNow()
 	}
 
+	after := time.Now().Truncate(160 * time.Hour)
+	before := after.Add(24 * time.Hour)
+
 	transactions, err := client.Transactions(ListTransactionsInput{
 		AccountID: accounts[0].ID,
+		Pagination: Pagination{
+			Since:  &after,
+			Before: &before,
+			Limit:  5,
+		},
 	})
 
 	if err != nil {
@@ -53,7 +78,37 @@ func TestClient_Transactions(t *testing.T) {
 	}
 }
 
+func TestClient_GetTransaction(t *testing.T) {
+	accounts, err := client.Accounts()
+
+	if err != nil {
+		t.FailNow()
+	}
+
+	transactions, err := client.Transactions(ListTransactionsInput{AccountID: accounts[0].ID})
+
+	if err != nil {
+		t.FailNow()
+	}
+
+	tid := transactions[0].ID
+
+	txn, err := client.GetTransaction(tid)
+
+	if err != nil {
+		t.FailNow()
+	}
+
+	t.Log(txn)
+}
+
 func TestClient_AddFeedItem(t *testing.T) {
+
+	// Skip this for short as it will push an item to the user's feed.
+	if testing.Short() {
+		t.SkipNow()
+	}
+
 	accounts, err := client.Accounts()
 
 	if err != nil {
