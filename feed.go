@@ -1,25 +1,59 @@
 package monzo
 
+import (
+	"fmt"
+	"github.com/google/go-querystring/query"
+	"net/http"
+)
+
+// FeedEntryType denotes the type of the feed entry.
+type FeedEntryType string
+
+const (
+	// BasicFeedEntry is the most basic (and currently, only) feed entry type.
+	BasicFeedEntry FeedEntryType = "basic"
+)
 
 // FeedEntry represents an entry into the user's account feed
 type FeedEntry struct {
-    AccountID string `json:"account_id"`
-    Type string `json:"type"`
-    URL string `json:"url"`
-    
-    Properties struct {
-        Title string `json:"title"`
-        Body string `json:"body"`
-        ImageURL string `json:"image_url"`
-        BackgroundColor string `json:"background_color"`
-        BodyColor string `json:"body_color"`
-        TitleColor string `json:"title"`
-    } `json:"params"`
+	AccountID       string        `url:"account_id"`
+	Type            FeedEntryType `url:"type"`
+	URL             string        `url:"url"`
+	Title           string        `url:"params[title]"`
+	Body            string        `url:"params[body]"`
+	ImageURL        string        `url:"params[image_url]"`
+	BackgroundColor string        `url:"params[background_color]"`
+	BodyColor       string        `url:"params[body_color]"`
+	TitleColor      string        `url:"params[title_color]"`
 }
 
 // AddFeedItem adds a new item to the user's account feed
-func AddFeedItem(item FeedEntry) error {
-    
+func (c Client) AddFeedItem(item FeedEntry) error {
 
-    return nil
+	reqURL := *baseURL
+	reqURL.Path = "/feed"
+
+	body, err := query.Values(item)
+
+	reqURL.RawQuery = body.Encode()
+
+	fmt.Println(body.Encode())
+
+	if err != nil {
+		return err
+	}
+
+	req := &http.Request{
+		Method: http.MethodPost,
+		URL:    &reqURL,
+		Header: make(http.Header),
+	}
+
+	req.Header.Set("Content-Type", "application/json;charset=utf-8")
+
+	resp := make(map[string]interface{})
+
+	err = c.json(req, &resp)
+
+	return err
 }

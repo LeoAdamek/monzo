@@ -6,10 +6,10 @@ Golang API client for [Monzo][monzo]
 Features
 --------
 
-* No external dependencies
+* (ONE) external dependency.
 * Overridable `net/http.Client`
 * Overridable logging
-* Decent test coverage
+* Decent test coverage (ish)
 * Built-in helpers
 
 Documentation
@@ -59,3 +59,5 @@ func main() {
 
 
 [monzo]: https://monzo.com/
+
+[godoc]: https://godoc.org/LeoAdamek/monzo
