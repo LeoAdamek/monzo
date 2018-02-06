@@ -66,6 +66,7 @@ func TestClient_AddFeedItem(t *testing.T) {
 		AccountID:       aid,
 		Type:            BasicFeedEntry,
 		URL:             "about:blank",
+		ImageURL:        "https://www.placecage.com/32/32",
 		Title:           "Monzo API Test",
 		Body:            "Test API entry",
 		BackgroundColor: "#000000",

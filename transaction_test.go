@@ -48,17 +48,3 @@ func TestByValue(t *testing.T) {
 		}
 	}
 }
-
-func TestByValueDesc(t *testing.T) {
-	expected := []string{"3", "1", "2"}
-
-	tx := transactions
-
-	sort.Sort(ByValueDesc(tx))
-
-	for idx := range tx {
-		if tx[idx].ID != expected[idx] {
-			t.Errorf("Expected (ID = %d) as pos %d, got (ID = %d", expected[idx], idx, tx[idx].ID)
-		}
-	}
-}

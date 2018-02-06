@@ -46,7 +46,7 @@ func topTransactions(ctx *cli.Context) error {
 	}
 
 	for idx, tx := range txns[0:n] {
-		log.Printf("Transaction #%d: %4.2f to %s", idx, float64(tx.Amount)/100.0, tx.Merchant.Name)
+		log.Printf("Transaction #%d: %4.2f to %s%s", idx, float64(tx.Amount)/100.0, tx.Merchant.Emoji, tx.Merchant.Name)
 	}
 
 	return nil

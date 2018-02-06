@@ -150,21 +150,3 @@ func (b ByValue) Swap(i, j int) {
 func (b ByValue) Less(i, j int) bool {
 	return b[i].Amount < b[j].Amount
 }
-
-// ByValueDesc sorts transactions by their value in _descending_ order.
-type ByValueDesc []Transaction
-
-//
-func (b ByValueDesc) Len() int {
-	return len(b)
-}
-
-//
-func (b ByValueDesc) Swap(i, j int) {
-	b[i], b[j] = b[j], b[i]
-}
-
-//
-func (b ByValueDesc) Less(i, j int) bool {
-	return b[i].Amount > b[j].Amount
-}

@@ -1,9 +1,11 @@
 package monzo
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/google/go-querystring/query"
 	"net/http"
+	"net/url"
 )
 
 // FeedEntryType denotes the type of the feed entry.
@@ -33,25 +35,29 @@ func (c Client) AddFeedItem(item FeedEntry) error {
 	reqURL := *baseURL
 	reqURL.Path = "/feed"
 
-	body, err := query.Values(item)
-
-	reqURL.RawQuery = body.Encode()
-
-	fmt.Println(body.Encode())
+	values, err := query.Values(item)
 
 	if err != nil {
 		return err
 	}
 
-	req := &http.Request{
-		Method: http.MethodPost,
-		URL:    &reqURL,
-		Header: make(http.Header),
+	body, err := url.QueryUnescape(values.Encode())
+
+	if err != nil {
+		return err
 	}
 
-	req.Header.Set("Content-Type", "application/json;charset=utf-8")
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), bytes.NewBufferString(body))
+
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	resp := make(map[string]interface{})
+
+	fmt.Println(body)
 
 	err = c.json(req, &resp)
 
