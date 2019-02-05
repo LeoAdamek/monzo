@@ -12,10 +12,11 @@ type Transaction struct {
 
 	CreatedAt time.Time `json:"created"`
 
-	Amount int `json:"amount"`
+	Amount Money `json:"amount"`
 
 	// Account balance after this transaction. Used only for Mondo prepaid cards.
-	AccountBalance int `json:"account_balance"`
+	// @deprecated
+	AccountBalance int64 `json:"account_balance"`
 
 	Currency string `json:"currency"`
 
@@ -37,28 +38,6 @@ type Transaction struct {
 
 // TransactionMetadata is a set of custom key/value pairs assigned to a transaction.
 type TransactionMetadata map[string]string
-
-// Merchant represents a Merchant
-type Merchant struct {
-	CreatedAt time.Time `json:"created"`
-	GroupID   string    `json:"group_id"`
-	ID        string    `json:"id"`
-
-	Address struct {
-		Address   string  `json:"address"`
-		City      string  `json:"city"`
-		Country   string  `json:"country"`
-		Latitude  float64 `json:"latitude"`
-		Longitude float64 `json:"longitude"`
-		Postcode  string  `json:"postcode"`
-		Region    string  `json:"region"`
-	}
-
-	Logo     string `json:"logo"`
-	Emoji    string `json:"emoji"`
-	Name     string `json:"name"`
-	Category string `json:"category"`
-}
 
 // ListTransactionsInput is used for the parameters of a transaction listing request
 type ListTransactionsInput struct {
@@ -148,5 +127,5 @@ func (b ByValue) Swap(i, j int) {
 
 //
 func (b ByValue) Less(i, j int) bool {
-	return b[i].Amount < b[j].Amount
+	return int64(b[i].Amount) < int64(b[j].Amount)
 }

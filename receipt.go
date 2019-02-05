@@ -7,7 +7,7 @@ type Receipt struct {
 	ID            string           `json:"id"`
 	ExternalID    string           `json:"external_id"`
 	TransactionID string           `json:"transaction_id"`
-	Total         int64            `json:"total"`
+	Total         Money            `json:"total"`
 	Currency      string           `json:"currency"`
 	Items         []ReceiptItem    `json:"items"`
 	Taxes         []ReceiptTax     `json:"taxes"`
@@ -18,18 +18,18 @@ type Receipt struct {
 // ReceiptItem represents a single item of a receipt
 type ReceiptItem struct {
 	Description string        `json:"description"`
-	Amount      int64         `json:"amount"`
+	Amount      Money         `json:"amount"`
 	Currency    string        `json:"currency"`
 	Quantity    float64       `json:"quantity"`
 	Unit        string        `json:"unit"`
-	Tax         int64         `json:"tax"`
+	Tax         Money         `json:"tax"`
 	SubItems    []ReceiptItem `json:"sub_items"`
 }
 
 // ReceiptTax represents a tax levied on a receipt
 type ReceiptTax struct {
 	Description string `json:"description"`
-	Amount      int64  `json:"amount"`
+	Amount      Money  `json:"amount"`
 	Currency    string `json:"currency"`
 	TaxNumber   string `json:"tax_number"`
 }
@@ -37,7 +37,7 @@ type ReceiptTax struct {
 // ReceiptPayment represents a payment made against this receipt
 type ReceiptPayment struct {
 	Type         string `json:"type"`
-	Amount       int64  `json:"amount"`
+	Amount       Money  `json:"amount"`
 	Currency     string `json:"currency"`
 	LastFour     string `json:"last_four"`
 	GiftGardType string `json:"gift_card_type"`
@@ -67,7 +67,7 @@ func (c Client) GetReceipt(externalID string) (*Receipt, error) {
 
 	reqURL.RawQuery = q.Encode()
 
-	req := http.Request{
+	req := &http.Request{
 		URL:    &reqURL,
 		Method: http.MethodGet,
 	}

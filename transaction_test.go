@@ -44,7 +44,7 @@ func TestByValue(t *testing.T) {
 
 	for idx := range tx {
 		if tx[idx].ID != expected[idx] {
-			t.Errorf("Expected (ID = %d) as pos %d, got (ID = %d", expected[idx], idx, tx[idx].ID)
+			t.Errorf("Expected (ID = %s) as pos %d, got (ID = %s", expected[idx], idx, tx[idx].ID)
 		}
 	}
 }
