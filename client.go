@@ -52,7 +52,8 @@ func New(token string) *Client {
 	}
 }
 
-func (c Client) do(req *http.Request) (*http.Response, error) {
+// Do will perform the given http request.
+func (c Client) Do(req *http.Request) (*http.Response, error) {
 
 	if req.Header == nil {
 		req.Header = make(http.Header)
@@ -87,7 +88,7 @@ func (c Client) json(req *http.Request, into interface{}) error {
 	req.Header.Add("Accept", "text/*;q=0.4")
 	req.Header.Add("Accept", "*/*;q=0.2")
 
-	res, err := c.do(req)
+	res, err := c.Do(req)
 
 	if err != nil {
 		return err
