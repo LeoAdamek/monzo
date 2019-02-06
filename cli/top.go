@@ -1,14 +1,17 @@
 package main
 
 import (
-	"github.com/LeoAdamek/monzo"
-	"github.com/urfave/cli"
+	"context"
 	"os"
 	"sort"
+
+	"github.com/LeoAdamek/monzo"
+	"github.com/urfave/cli"
 )
 
-func topTransactions(ctx *cli.Context) error {
+func topTransactions(ct *cli.Context) error {
 
+	ctx := context.Background()
 	token := os.Getenv("MONZO_TOKEN")
 
 	if token == "" {
@@ -17,7 +20,7 @@ func topTransactions(ctx *cli.Context) error {
 
 	c := monzo.New(token)
 
-	accounts, err := c.Accounts()
+	accounts, err := c.Accounts(ctx)
 
 	if err != nil {
 		log.Fatalln("Unable to get accounts: ", err)
@@ -26,7 +29,7 @@ func topTransactions(ctx *cli.Context) error {
 	var txns []monzo.Transaction
 
 	for _, account := range accounts {
-		transactions, err := c.Transactions(monzo.ListTransactionsInput{AccountID: account.ID})
+		transactions, err := c.Transactions(ctx, monzo.ListTransactionsInput{AccountID: account.ID})
 
 		if err != nil {
 			log.Printf("Unable to get transactions for account %s: %s", account.ID, err)
@@ -39,7 +42,7 @@ func topTransactions(ctx *cli.Context) error {
 	// Sort transactions
 	sort.Sort(monzo.ByValue(txns))
 
-	n := ctx.Int("n")
+	n := ct.Int("n")
 
 	if n > len(txns) {
 		n = len(txns)

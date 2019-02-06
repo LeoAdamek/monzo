@@ -25,10 +25,12 @@ import (
     "github.com/LeoAdamek/monzo"
     "os"
     "fmt"
+    "context"
 )
 
 func main() {
     token := os.Getenv("MONZO_TOKEN")
+    ctx := context.WithTimeout(time.Second, context.Background())
     
     if token == "" {
         fmt.Println("Please set the MONZO_TOKEN environment variable")
@@ -37,14 +39,14 @@ func main() {
     
     m := monzo.New(token)
     
-    accounts, err := m.Accounts()
+    accounts, err := m.Accounts(ctx)
     
     if err != nil {
         fmt.Println("Unable to list accounts:", err)
         os.Exit(1)
     }
     
-    transactions, err := m.Transactions(monzo.ListTransactionsInput{AccountID: accounts[0].ID})
+    transactions, err := m.Transactions(ctx, monzo.ListTransactionsInput{AccountID: accounts[0].ID})
     
     if err != nil {
         fmt.Println("Unable to list transactions:", err)
@@ -52,7 +54,7 @@ func main() {
     }
     
     for _, t := range transactions {
-        fmt.Printf("Paid £%4.2d to %s\n", float64(t.Amount)/100.0 , t.Merchant.Name)
+        fmt.Printf("Paid £%s to %s\n", t.Amount.String() , t.Merchant.Name)
     }
 }
 ````

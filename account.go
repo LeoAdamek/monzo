@@ -1,6 +1,7 @@
 package monzo
 
 import (
+	"context"
 	"net/http"
 	"time"
 )
@@ -20,7 +21,7 @@ type Balance struct {
 }
 
 // Accounts gets a list of the user's accounts
-func (c Client) Accounts() ([]Account, error) {
+func (c Client) Accounts(ctx context.Context) ([]Account, error) {
 
 	reqURL := *baseURL
 	reqURL.Path = "/accounts"
@@ -34,12 +35,13 @@ func (c Client) Accounts() ([]Account, error) {
 		Accounts []Account
 	}
 
-	err := c.json(req, &response)
+	err := c.json(ctx, req, &response)
 
 	return response.Accounts, err
 }
 
-func (c Client) Balance(accountID string) (Balance, error) {
+// Balance gets teh current balance for a given account.
+func (c Client) Balance(ctx context.Context, accountID string) (Balance, error) {
 	reqURL := *baseURL
 	reqURL.Path = "/balance"
 
@@ -55,7 +57,7 @@ func (c Client) Balance(accountID string) (Balance, error) {
 
 	var b Balance
 
-	err := c.json(req, &b)
+	err := c.json(ctx, req, &b)
 
 	return b, err
 }

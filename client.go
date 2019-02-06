@@ -3,6 +3,7 @@
 package monzo
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
@@ -11,6 +12,8 @@ import (
 	"net/url"
 	"os"
 	"time"
+
+	"golang.org/x/net/context/ctxhttp"
 )
 
 const baseURLstr = "https://api.monzo.com/"
@@ -53,7 +56,7 @@ func New(token string) *Client {
 }
 
 // Do will perform the given http request.
-func (c Client) Do(req *http.Request) (*http.Response, error) {
+func (c Client) Do(ctx context.Context, req *http.Request) (*http.Response, error) {
 
 	if req.Header == nil {
 		req.Header = make(http.Header)
@@ -64,7 +67,7 @@ func (c Client) Do(req *http.Request) (*http.Response, error) {
 
 	st := time.Now()
 
-	res, err := c.HTTP.Do(req)
+	res, err := ctxhttp.Do(ctx, c.HTTP, req)
 
 	dt := time.Now().Sub(st)
 
@@ -77,7 +80,7 @@ func (c Client) Do(req *http.Request) (*http.Response, error) {
 	return res, err
 }
 
-func (c Client) json(req *http.Request, into interface{}) error {
+func (c Client) json(ctx context.Context, req *http.Request, into interface{}) error {
 
 	if req.Header == nil {
 		req.Header = make(http.Header)
@@ -88,7 +91,7 @@ func (c Client) json(req *http.Request, into interface{}) error {
 	req.Header.Add("Accept", "text/*;q=0.4")
 	req.Header.Add("Accept", "*/*;q=0.2")
 
-	res, err := c.Do(req)
+	res, err := c.Do(ctx, req)
 
 	if err != nil {
 		return err

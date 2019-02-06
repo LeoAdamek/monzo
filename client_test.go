@@ -1,12 +1,15 @@
 package monzo
 
 import (
+	"context"
 	"os"
 	"testing"
 	"time"
 )
 
 var client *Client
+
+var ctx = context.TODO()
 
 func init() {
 	token := os.Getenv("MONZO_TOKEN")
@@ -19,7 +22,7 @@ func init() {
 }
 
 func TestClient_Accounts(t *testing.T) {
-	accounts, err := client.Accounts()
+	accounts, err := client.Accounts(ctx)
 
 	if err != nil {
 		t.Error("Got error listing accounts:", err)
@@ -33,13 +36,13 @@ func TestClient_Accounts(t *testing.T) {
 }
 
 func TestClient_Balance(t *testing.T) {
-	accounts, err := client.Accounts()
+	accounts, err := client.Accounts(ctx)
 
 	if err != nil {
 		t.FailNow()
 	}
 
-	b, err := client.Balance(accounts[0].ID)
+	b, err := client.Balance(ctx, accounts[0].ID)
 
 	if err != nil {
 		t.FailNow()
@@ -49,7 +52,7 @@ func TestClient_Balance(t *testing.T) {
 }
 
 func TestClient_Transactions(t *testing.T) {
-	accounts, err := client.Accounts()
+	accounts, err := client.Accounts(ctx)
 
 	if err != nil {
 		t.FailNow()
@@ -58,7 +61,7 @@ func TestClient_Transactions(t *testing.T) {
 	after := time.Now().Truncate(160 * time.Hour)
 	before := after.Add(24 * time.Hour)
 
-	transactions, err := client.Transactions(ListTransactionsInput{
+	transactions, err := client.Transactions(ctx, ListTransactionsInput{
 		AccountID: accounts[0].ID,
 		Pagination: Pagination{
 			Since:  &after,
@@ -79,13 +82,13 @@ func TestClient_Transactions(t *testing.T) {
 }
 
 func TestClient_GetTransaction(t *testing.T) {
-	accounts, err := client.Accounts()
+	accounts, err := client.Accounts(ctx)
 
 	if err != nil {
 		t.FailNow()
 	}
 
-	transactions, err := client.Transactions(ListTransactionsInput{AccountID: accounts[0].ID})
+	transactions, err := client.Transactions(ctx, ListTransactionsInput{AccountID: accounts[0].ID})
 
 	if err != nil {
 		t.FailNow()
@@ -93,7 +96,7 @@ func TestClient_GetTransaction(t *testing.T) {
 
 	tid := transactions[0].ID
 
-	txn, err := client.GetTransaction(tid)
+	txn, err := client.GetTransaction(ctx, tid)
 
 	if err != nil {
 		t.FailNow()
@@ -109,7 +112,7 @@ func TestClient_AddFeedItem(t *testing.T) {
 		t.SkipNow()
 	}
 
-	accounts, err := client.Accounts()
+	accounts, err := client.Accounts(ctx)
 
 	if err != nil {
 		t.FailNow()
@@ -129,7 +132,7 @@ func TestClient_AddFeedItem(t *testing.T) {
 		TitleColor:      "#FFFFFF",
 	}
 
-	err = client.AddFeedItem(item)
+	err = client.AddFeedItem(ctx, item)
 
 	if err != nil {
 		t.Error(err)

@@ -1,6 +1,9 @@
 package monzo
 
-import "net/http"
+import (
+	"context"
+	"net/http"
+)
 
 // Receipt represents a full itemized receipt.
 type Receipt struct {
@@ -57,7 +60,7 @@ type ReceiptMerchant struct {
 // GetReceipt will retrieve a single Receipt by its `external_id`
 //
 // @param externalID External ID of a receipt.
-func (c Client) GetReceipt(externalID string) (*Receipt, error) {
+func (c Client) GetReceipt(ctx context.Context, externalID string) (*Receipt, error) {
 	reqURL := *baseURL
 
 	reqURL.Path = "/transaction-receipts"
@@ -74,7 +77,7 @@ func (c Client) GetReceipt(externalID string) (*Receipt, error) {
 
 	r := &Receipt{}
 
-	if err := c.json(req, &r); err != nil {
+	if err := c.json(ctx, req, &r); err != nil {
 		return nil, err
 	}
 

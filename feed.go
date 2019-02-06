@@ -2,10 +2,12 @@ package monzo
 
 import (
 	"bytes"
+	"context"
 	"fmt"
-	"github.com/google/go-querystring/query"
 	"net/http"
 	"net/url"
+
+	"github.com/google/go-querystring/query"
 )
 
 // FeedEntryType denotes the type of the feed entry.
@@ -30,7 +32,7 @@ type FeedEntry struct {
 }
 
 // AddFeedItem adds a new item to the user's account feed
-func (c Client) AddFeedItem(item FeedEntry) error {
+func (c Client) AddFeedItem(ctx context.Context, item FeedEntry) error {
 
 	reqURL := *baseURL
 	reqURL.Path = "/feed"
@@ -59,7 +61,7 @@ func (c Client) AddFeedItem(item FeedEntry) error {
 
 	fmt.Println(body)
 
-	err = c.json(req, &resp)
+	err = c.json(ctx, req, &resp)
 
 	return err
 }

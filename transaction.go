@@ -1,6 +1,7 @@
 package monzo
 
 import (
+	"context"
 	"net/http"
 	"strconv"
 	"time"
@@ -46,7 +47,7 @@ type ListTransactionsInput struct {
 }
 
 // GetTransaction gets a single transaction
-func (c Client) GetTransaction(transactionID string) (Transaction, error) {
+func (c Client) GetTransaction(ctx context.Context, transactionID string) (Transaction, error) {
 
 	reqURL := *baseURL
 	reqURL.Path = "/transactions/" + transactionID
@@ -62,7 +63,7 @@ func (c Client) GetTransaction(transactionID string) (Transaction, error) {
 
 	var transaction Transaction
 
-	err := c.json(req, &transaction)
+	err := c.json(ctx, req, &transaction)
 
 	return transaction, err
 }
@@ -70,7 +71,7 @@ func (c Client) GetTransaction(transactionID string) (Transaction, error) {
 // Transactions lists a set of transactions
 //
 // input will define how those transactions are used
-func (c Client) Transactions(input ListTransactionsInput) ([]Transaction, error) {
+func (c Client) Transactions(ctx context.Context, input ListTransactionsInput) ([]Transaction, error) {
 
 	reqURL := *baseURL
 	reqURL.Path = "/transactions"
@@ -103,7 +104,7 @@ func (c Client) Transactions(input ListTransactionsInput) ([]Transaction, error)
 		Transactions []Transaction
 	}
 
-	err := c.json(req, &response)
+	err := c.json(ctx, req, &response)
 
 	return response.Transactions, err
 }
